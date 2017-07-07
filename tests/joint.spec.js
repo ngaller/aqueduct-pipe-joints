@@ -21,6 +21,7 @@ describe('joint', () => {
   describe('parent joint', () => {
     const buildJoint = () => {
       return Joint({
+        childEntity: 'Child', parentEntity: 'Parent',
         lookupField: 'ParentId',
         parentFieldName: 'Parent', parentFields: ['CustNum', 'Name'],
         parentCollection, childCollection
@@ -69,6 +70,7 @@ describe('joint', () => {
   describe('child related list', () => {
     const buildJoint = () => {
       return Joint({
+        childEntity: 'Child', parentEntity: 'Parent',
         lookupField: 'ParentId',
         relatedListName: 'Children', relatedListFields: ['ChildId', 'Name'],
         parentCollection, childCollection

@@ -23,5 +23,8 @@
     "eslint-config-f1": "^1.0.3",
     "mocha": "^3.4.2",
     "testdouble": "^3.2.2"
+  },
+  "dependencies": {
+    "simplecheck": "^0.1.3"
   }
 }
