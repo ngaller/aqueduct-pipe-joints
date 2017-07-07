@@ -2,7 +2,7 @@
   "name": "aqueduct-pipe-joints",
   "version": "1.0.0",
   "description": "Code for handling relationships",
-  "main": "index.js",
+  "main": "lib/joint.js",
   "scripts": {
     "test": "mocha --harmony -r ./tests/setup.js --recursive tests",
     "test:debug": "DEBUG=aqueduct:* mocha --harmony -r ./tests/setup.js --recursive tests"
