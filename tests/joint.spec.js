@@ -134,10 +134,10 @@ describe('joint', () => {
       return buildJoint().onParentInserted({
         CustNum: 'the-id'
       }).then(() => {
-        td.verify(parentCollection.addOrUpdateChildInCollection('the-id', 'Children', [
+        td.verify(parentCollection.update({Children: [
           { ChildId: 'child-id', Name: 'child name' },
           { ChildId: 'child-id2', Name: 'child name2' },
-        ], 'ChildId'))
+        ]}, {CustNum: 'the-id'}))
       })
     })
   })
