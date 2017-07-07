@@ -1,0 +1,27 @@
+{
+  "name": "aqueduct-pipe-joints",
+  "version": "1.0.0",
+  "description": "Code for handling relationships",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony -r ./tests/setup.js --recursive tests",
+    "test:debug": "DEBUG=aqueduct:* mocha --harmony -r ./tests/setup.js --recursive tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/nicocrm/aqueduct-pipe-joints.git"
+  },
+  "author": "Nicolas Galler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicocrm/aqueduct-pipe-joints/issues"
+  },
+  "homepage": "https://github.com/nicocrm/aqueduct-pipe-joints#readme",
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "eslint": "^4.1.1",
+    "eslint-config-f1": "^1.0.3",
+    "mocha": "^3.4.2",
+    "testdouble": "^3.2.2"
+  }
+}
