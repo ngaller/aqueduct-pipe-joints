@@ -1,6 +1,6 @@
 {
   "name": "aqueduct-pipe-joints",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Code for handling relationships",
   "main": "dist/joint.js",
   "scripts": {
