@@ -1,8 +1,8 @@
 {
   "name": "aqueduct-pipe-joints",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Code for handling relationships",
-  "main": "lib/joint.js",
+  "main": "dist/joint.js",
   "scripts": {
     "lint": "eslint --ext .js lib",
     "prepublish": "npm run build",
