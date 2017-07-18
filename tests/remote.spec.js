@@ -1,7 +1,7 @@
-const Joint = require('../lib/joint')
+const Joint = require('../lib/remote')
 const td = require('testdouble')
 
-describe('joint', () => {
+describe('remote joint', () => {
   let parentCollection, childCollection
 
   const makeCollection = (keyField) => ({
@@ -10,7 +10,8 @@ describe('joint', () => {
     find: td.function('find'),
     addOrUpdateChildInCollection: td.function('addOrUpdateChildInCollection'),
     removeChildFromCollection: td.function('removeChildFromCollection'),
-    getKeyField: () => keyField
+    getKeyField: () => keyField,
+    getLocalKeyField: () => '_id'
   })
 
   beforeEach(() => {
@@ -23,7 +24,7 @@ describe('joint', () => {
       return Joint({
         childEntity: 'Child', parentEntity: 'Parent',
         lookupField: 'ParentId',
-        parentFieldName: 'Parent', parentFields: ['CustNum', 'Name'],
+        parentFieldName: 'Parent', parentFields: ['Name'],
         parentCollection, childCollection
       })
     }
@@ -44,26 +45,37 @@ describe('joint', () => {
       buildJoint().onParentUpdated({
         CustNum: 'the-id',
         Name: 'The Parent',
-        OtherField: 'whatever'
+        OtherField: 'whatever',
+        _id: 1234
       })
-      td.verify(childCollection.update({ Parent: { CustNum: 'the-id', Name: 'The Parent' } }, { ParentId: 'the-id' }))
+      td.verify(childCollection.update({ Parent: { Name: 'The Parent', _id: 1234 } }, { ParentId: 'the-id' }))
     })
+
+    // it('updates the parent property on the child, when the parent does not have a CustNum', () => {
+    //   buildJoint().onParentUpdated({
+    //     Name: 'The Parent',
+    //     OtherField: 'whatever',
+    //     _id: 1234
+    //   })
+    //   td.verify(childCollection.update({ Parent: { Name: 'The Parent', _id: 1234 } }, { ParentId: 'the-id' }))
+    // })
 
     it('updates the parent property on the child when the parent is inserted', () => {
       buildJoint().onParentInserted({
         CustNum: 'the-id',
         Name: 'The Parent',
-        OtherField: 'whatever'
+        OtherField: 'whatever',
+        _id: 1234
       })
-      td.verify(childCollection.update({ Parent: { CustNum: 'the-id', Name: 'The Parent' } }, { ParentId: 'the-id' }))
+      td.verify(childCollection.update({ Parent: { Name: 'The Parent', _id: 1234 } }, { ParentId: 'the-id' }))
     })
 
     it('enhances the cleanse function to fetch parent record when child is inserted', async () => {
-      td.when(parentCollection.get({CustNum: 'the-id'})).thenResolve({CustNum: 'the-id', Name: 'The parent', Something: 'Whatever'})
+      td.when(parentCollection.get({CustNum: 'the-id'})).thenResolve({CustNum: 'the-id', Name: 'The parent', Something: 'Whatever', _id: 1234})
       const joint = buildJoint()
       let cleanse = joint.enhanceCleanse(undefined)
       const rec1 = await cleanse({ParentId: 'the-id', Other: 'stuff'})
-      expect(rec1).to.eql({ParentId: 'the-id', Other: 'stuff', Parent: { CustNum: 'the-id', Name: 'The parent' }})
+      expect(rec1).to.eql({ParentId: 'the-id', Other: 'stuff', Parent: { _id: 1234, Name: 'The parent' }})
     })
   })
 
@@ -72,17 +84,13 @@ describe('joint', () => {
       return Joint({
         childEntity: 'Child', parentEntity: 'Parent',
         lookupField: 'ParentId',
-        relatedListName: 'Children', relatedListFields: ['ChildId', 'Name'],
+        relatedListName: 'Children', relatedListFields: ['Name'],
         parentCollection, childCollection
       })
     }
 
     it('does not have onParentUpdated', () => {
       buildJoint().should.not.have.property('onParentUpdated')
-    })
-
-    it('does not have enhanceCleanse', () => {
-      buildJoint().should.not.have.property('enhanceCleanse')
     })
 
     it('has onParentInserted', () => {
@@ -97,14 +105,15 @@ describe('joint', () => {
 
     it('adds record to related list on parent when child is inserted', () => {
       buildJoint().onChildInserted({
+        _id: 1234,
         ParentId: 'the-id',
         ChildId: 'child-id',
         Name: 'child name',
         Other: 'stuff'
       })
       td.verify(parentCollection.addOrUpdateChildInCollection('the-id', 'Children', {
-        ChildId: 'child-id', Name: 'child name'
-      }, 'ChildId'))
+        _id: 1234, Name: 'child name'
+      }, '_id'))
     })
 
     it('removes record from related list on parent when child is removed', () => {
@@ -112,10 +121,11 @@ describe('joint', () => {
         ParentId: 'the-id',
         ChildId: 'child-id',
         Name: 'child name',
-        Other: 'stuff'
+        Other: 'stuff',
+        _id: 1234
       })
       td.verify(parentCollection.removeChildFromCollection('the-id', 'Children', {
-        ChildId: 'child-id'
+        _id: 1234
       }))
     })
 
@@ -130,15 +140,15 @@ describe('joint', () => {
 
     it('builds up related list when parent is inserted after child', () => {
       td.when(childCollection.find({ParentId: 'the-id'})).thenResolve([
-        { ChildId: 'child-id', Name: 'child name', Other: 'stuff' },
-        { ChildId: 'child-id2', Name: 'child name2' },
+        { _id: 1234, Name: 'child name', Other: 'stuff' },
+        { _id: 1235, Name: 'child name2' },
       ])
       return buildJoint().onParentInserted({
         CustNum: 'the-id'
       }).then(() => {
         td.verify(parentCollection.update({Children: [
-          { ChildId: 'child-id', Name: 'child name' },
-          { ChildId: 'child-id2', Name: 'child name2' },
+          { _id: 1234, Name: 'child name' },
+          { _id: 1235, Name: 'child name2' },
         ]}, {CustNum: 'the-id'}))
       })
     })
