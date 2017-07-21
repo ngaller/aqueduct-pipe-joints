@@ -17,7 +17,7 @@ From the app code:
  - loop through the joints
   - get a local collection instance for the joint parent
   - build up a joint using the child and parent collection, and the rest of the configuration from the pipe
-  - use the joint that was built and add hooks to invoke the onParentUpdated, onChildUpdated and onChildInserted functions
+  - use the joint that was built and add hooks to invoke the onChildUpdated and onChildInserted functions
     (depending on the joint configuration they may not all be present)
 
 From the sync code (this is in aqueduct-sync):
@@ -26,3 +26,8 @@ From the sync code (this is in aqueduct-sync):
  - use the enhanceCleanse function to modify the pipe cleanse method (this will populate the parent relationship when a child is inserted or updated)
  - add an event listener for the onChildInserted, onChildUpdated and onChildRemoved functions, if present (to be invoked only when that is done from the remote), for corresponding events on the local child collection
  - add an event listener for onParentInserted and onParentUpdated (again, only to be invoked for remote operations), for corresponding events on the local parent collection
+
+
+TODO:
+
+ - need to be able to have "cascading" updates: if I update the parent on a child, and that child is in a related list, then that related list needs to update also.  Currently this will not work, when the update is done from the remote end.
