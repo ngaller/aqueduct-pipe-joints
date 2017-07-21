@@ -77,6 +77,14 @@ describe('remote joint', () => {
       const rec1 = await cleanse({ParentId: 'the-id', Other: 'stuff'})
       expect(rec1).to.eql({ParentId: 'the-id', Other: 'stuff', Parent: { _id: 1234, Name: 'The parent' }})
     })
+
+    it('enhances the prepare function to retrieve the parent id when child is sent', async () => {
+      td.when(parentCollection.get(1234)).thenResolve({CustNum: 'the-id', Name: 'The parent', Something: 'Whatever', _id: 1234})
+      const joint = buildJoint()
+      let prepare = joint.enhancePrepare(undefined)
+      const rec1 = await prepare({Parent: { _id: 1234 }})
+      expect(rec1).to.eql({ParentId: 'the-id', Parent: {_id: 1234}})
+    })
   })
 
   describe('child related list', () => {
@@ -84,6 +92,7 @@ describe('remote joint', () => {
       return Joint({
         childEntity: 'Child', parentEntity: 'Parent',
         lookupField: 'ParentId',
+        parentFieldName: 'Parent',
         relatedListName: 'Children', relatedListFields: ['Name'],
         parentCollection, childCollection
       })
@@ -111,7 +120,7 @@ describe('remote joint', () => {
         Name: 'child name',
         Other: 'stuff'
       })
-      td.verify(parentCollection.addOrUpdateChildInCollection('the-id', 'Children', {
+      td.verify(parentCollection.addOrUpdateChildInCollection({CustNum: 'the-id'}, 'Children', {
         _id: 1234, Name: 'child name'
       }, '_id'))
     })
@@ -124,7 +133,7 @@ describe('remote joint', () => {
         Other: 'stuff',
         _id: 1234
       })
-      td.verify(parentCollection.removeChildFromCollection('the-id', 'Children', {
+      td.verify(parentCollection.removeChildFromCollection({CustNum: 'the-id'}, 'Children', {
         _id: 1234
       }))
     })
