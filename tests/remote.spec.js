@@ -85,6 +85,13 @@ describe('remote joint', () => {
       const rec1 = await prepare({Parent: { _id: 1234 }})
       expect(rec1).to.eql({ParentId: 'the-id', Parent: {_id: 1234}})
     })
+
+    it('uses the parent id already on the record if it is present', async () => {
+      const joint = buildJoint()
+      let prepare = joint.enhancePrepare(undefined)
+      const rec1 = await prepare({Parent: { _id: 1234, CustNum: 'the-id' }})
+      expect(rec1).to.eql({ParentId: 'the-id', Parent: {_id: 1234, CustNum: 'the-id' }})
+    })
   })
 
   describe('child related list', () => {
