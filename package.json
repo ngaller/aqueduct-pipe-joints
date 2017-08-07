@@ -1,6 +1,6 @@
 {
   "name": "aqueduct-pipe-joints",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Code for handling relationships",
   "scripts": {
     "lint": "eslint --ext .js lib",
