@@ -1,6 +1,8 @@
 Module for maintaining relationships that are specified on a pipe (for [Aqueduct Sync](https://github.com/nicocrm/aqueduct-sync))
 
-The general philosophy is that joints are maintained via a sub-document, rather than a foreign key, so we strip the foreign key and replace it with the summary versino of the parent document.
+For information about how to define the joints, see [Aqueduct Sync](https://github.com/nicocrm/aqueduct-sync)!  The rest of this document is about the internals of `aqueduct-pipe-joints`.
+
+The general philosophy is that joints are maintained via a sub-document, rather than a foreign key, so we strip the foreign key and replace it with the summary version of the parent document.
 
 Because those joints need to be maintained from the app code as well as from the sync process, this is available in an external module.
 
