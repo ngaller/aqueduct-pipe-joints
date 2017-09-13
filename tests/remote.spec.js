@@ -29,6 +29,15 @@ describe('remote joint', () => {
       })
     }
 
+    const buildJointDeep = () => {
+      return Joint({
+        childEntity: 'Child', parentEntity: 'Parent',
+        lookupField: 'Parent.CustNum',
+        parentFieldName: 'Parent', parentFields: ['Name'],
+        parentCollection, childCollection
+      })
+    }
+
     it('has onParentUpdated', () => {
       buildJoint().should.have.property('onParentUpdated').that.is.a('function')
     })
@@ -91,6 +100,13 @@ describe('remote joint', () => {
       let prepare = joint.enhancePrepare(undefined)
       const rec1 = await prepare({Parent: { _id: 1234, CustNum: 'the-id' }})
       expect(rec1).to.eql({ParentId: 'the-id', Parent: {_id: 1234, CustNum: 'the-id' }})
+    })
+
+    it('uses the parent id already on the record if it is present - deep path', async () => {
+      const joint = buildJointDeep()
+      let prepare = joint.enhancePrepare(undefined)
+      const rec1 = await prepare({Parent: { _id: 1234, CustNum: 'the-id' }})
+      expect(rec1).to.eql({Parent: {_id: 1234, CustNum: 'the-id' }})
     })
   })
 
